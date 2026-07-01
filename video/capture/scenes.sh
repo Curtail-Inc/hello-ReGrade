@@ -62,7 +62,7 @@ beat03_record() {
   out "${DIM}  proxying :19870 → :8001 … recording${RST}" 0.7
   out "${BLUE} →${RST} POST /login   ${DIM}(fresh token)${RST}" 0.35
   out "${BLUE} →${RST} GET  /products   ${DIM}(public)${RST}" 0.35
-  out "${BLUE} →${RST} GET  /orders/1001   ×3   ${DIM}(X-Auth-Token)${RST}" 0.6
+  out "${BLUE} →${RST} GET  /orders/1001   ×3   ${DIM}(Authorization: Bearer)${RST}" 0.6
   out "${DIM}  ^C  finalizing…${RST}" 0.6
   out "${GRN} ✓${RST} Recording ID: ${BOLD}1fac0fb9-436f-4842-bffd-bbd1f02b5996${RST}" 0.4
   out "${GRN} ✓${RST} 7 entries, 1 chunk" 1.6
@@ -103,8 +103,9 @@ beat06_map() {
   echo
   tool "create_id_mapping(source: body, json_path: \$.token, ns: auth_token)"
   out "     ${DIM}learns the fresh token from each /login response${RST}" 0.6
-  tool "create_transformation_rule(target: header, X-Auth-Token, ns: auth_token)"
-  out "     ${DIM}substitutes that token into the requests on replay${RST}" 0.9
+  tool "create_transformation_rule(target: header, Authorization,"
+  out "        ${DIM}pattern: Bearer (token), ns: auth_token)${RST}" 0.5
+  out "     ${DIM}substitutes the token into the Authorization header on replay${RST}" 0.9
   echo
   ask "Looks right — create them."
   claude "${GRN}✓${RST} Profile ${BOLD}hello-regrade-demo${RST} updated. Re-run the replay"

@@ -48,5 +48,5 @@ keeping the two in sync, then re-run both steps.
   `summarize_deltas` runs against the demo. The scenes replay that data cleanly rather than
   screen-recording a live TUI, so the video is deterministic and regenerable.
 - The canonical mapping profile is `hello-regrade-demo` (id-mapping on `$.token` +
-  a whole-value `X-Auth-Token` header transform).
+  a pattern-based `Authorization: Bearer` header transform with a `captures` group).
 - `capture/*` clips, `out/`, and the generated `capture/tapes/` are gitignored.
