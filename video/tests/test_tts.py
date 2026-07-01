@@ -22,3 +22,17 @@ def test_stub_beat_produces_words_and_audio(tmp_path):
     assert [w["word"] for w in words] == ["hello", "there", "world"]
     assert words[0]["start"] == 0.0 and words[-1]["end"] > words[0]["end"]
     assert os.path.getsize(out) > 0   # ffmpeg wrote real audio
+
+
+def test_warn_if_stub_warns_when_tts_stub_set(monkeypatch, capsys):
+    from tts import _warn_if_stub
+    monkeypatch.setenv("TTS_STUB", "1")
+    _warn_if_stub()
+    assert "TTS_STUB active" in capsys.readouterr().err
+
+
+def test_warn_if_stub_silent_when_tts_stub_unset(monkeypatch, capsys):
+    from tts import _warn_if_stub
+    monkeypatch.delenv("TTS_STUB", raising=False)
+    _warn_if_stub()
+    assert capsys.readouterr().err == ""

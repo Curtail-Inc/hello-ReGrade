@@ -8,6 +8,12 @@ from lib.script import load_script
 VOICE_ID = os.environ.get("ELEVENLABS_VOICE_ID", "Gfpl8Yo74Is0W6cPUWWT")  # Skyler's chosen ElevenLabs voice
 
 
+def _warn_if_stub():
+    if os.environ.get("TTS_STUB"):
+        print("[tts] TTS_STUB active — audio is silent, captions are NOT voice-aligned",
+              file=sys.stderr)
+
+
 def words_from_alignment(alignment):
     chars = alignment["characters"]
     starts = alignment["character_start_times_seconds"]
@@ -64,6 +70,7 @@ def _stub_beat(text, out_mp3):
 
 
 def synthesize(script_path, out_mp3, out_timestamps, work="capture"):
+    _warn_if_stub()
     beats = load_script(script_path)
     per_beat, mp3s = {}, []
     for i, b in enumerate(beats):
