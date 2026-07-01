@@ -1,7 +1,8 @@
 import {AbsoluteFill, Series} from 'remotion';
 import {Episode} from './schema';
 import {Beat} from './Beat';
-export const Video: React.FC<Episode> = ({beats}) => (
+import {Captions} from './Captions';
+export const Video: React.FC<Episode> = ({beats, captions}) => (
   <AbsoluteFill>
     <Series>
       {beats.map((b) => (
@@ -10,5 +11,6 @@ export const Video: React.FC<Episode> = ({beats}) => (
         </Series.Sequence>
       ))}
     </Series>
+    <Captions captions={captions} />
   </AbsoluteFill>
 );
