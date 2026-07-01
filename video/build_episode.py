@@ -4,10 +4,10 @@ import sys
 from lib.script import load_script
 
 
-def words_to_frames(words, fps, offset_sec):
+def words_to_frames(words, fps, offset_frames):
     return [{"word": w["word"],
-             "startFrame": round((w["start"] + offset_sec) * fps),
-             "endFrame": round((w["end"] + offset_sec) * fps)} for w in words]
+             "startFrame": offset_frames + round(w["start"] * fps),
+             "endFrame": offset_frames + round(w["end"] * fps)} for w in words]
 
 
 def chunk_cues(word_frames, fps, max_words=7):
@@ -23,14 +23,15 @@ def chunk_cues(word_frames, fps, max_words=7):
 def build_episode(script_path, timestamps_path, fps=24, width=1920, height=1080):
     beats = load_script(script_path)
     ts = json.loads(open(timestamps_path).read())["beats"]
-    out_beats, all_cues, offset = [], [], 0.0
+    out_beats, all_cues, offset_frames = [], [], 0
     for b in beats:
         info = ts[b.id]
         dur = info["duration"]
-        out_beats.append({"id": b.id, "clip": b.clip, "durationFrames": max(1, round(dur * fps))})
-        wf = words_to_frames(info.get("words", []), fps, offset)
+        duration_frames = max(1, round(dur * fps))
+        out_beats.append({"id": b.id, "clip": b.clip, "durationFrames": duration_frames})
+        wf = words_to_frames(info.get("words", []), fps, offset_frames)
         all_cues.extend(chunk_cues(wf, fps))
-        offset += dur
+        offset_frames += duration_frames
     return {"fps": fps, "width": width, "height": height, "beats": out_beats, "captions": all_cues}
 
 
