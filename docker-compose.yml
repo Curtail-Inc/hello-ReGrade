@@ -1,0 +1,14 @@
+# Two versions of the same service. Record traffic against v1, replay against v2.
+services:
+  v1:
+    build: ./app
+    environment:
+      APP_VERSION: "1"
+    ports:
+      - "8001:8000"
+  v2:
+    build: ./app
+    environment:
+      APP_VERSION: "2"
+    ports:
+      - "8002:8000"
