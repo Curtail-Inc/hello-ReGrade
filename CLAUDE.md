@@ -33,9 +33,9 @@ time on it.
 
 ## The workflow to guide them through
 
-1. Confirm they've recorded against v1 and replayed against v2 (README §§ 3–4). Find the
+1. Confirm they've recorded against v1 and replayed against v2 (README §§ 1–2). Find the
    replay with `list_replays`.
-2. `summarize_deltas` — expect a wall of `401`s. Explain: the replay is reusing the old
+2. `summarize_deltas` — expect a burst of `401`s. Explain: the replay is reusing the old
    token; v2 doesn't recognize it. `/products` (public) should show **no** delta — point
    that out as the "nothing changed, nothing reported" control.
 3. Propose an **id-mapping**: extract the `token` field from the `/login` response and

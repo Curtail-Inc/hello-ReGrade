@@ -12,7 +12,7 @@ hiding underneath.
   `regrade` sensor from the downloads at https://app.regrade.curtail.com/downloads, and set
   `REGRADE_API_KEY` (or `~/.regrade/key`).
 - **Claude Code** with the ReGrade plugin:
-  `claude plugin marketplace add Curtail-Inc/Marketplace` then `claude plugin install regrade@regrade`.
+  `claude plugin marketplace add https://app.regrade.curtail.com/downloads/latest/marketplace.json` then `claude plugin install regrade@regrade --scope user`.
 
 ## The demo service
 
@@ -62,7 +62,7 @@ Open this repo in Claude Code and say:
 > Walk me through my latest ReGrade replay.
 
 Claude — guided by this repo's `CLAUDE.md` — will explain each step as it goes. You'll
-see a wall of `401`s first: the replay is reusing the token from the recording, but v2
+see a burst of `401`s first: the replay is reusing the token from the recording, but v2
 issued a brand-new one. **Mapping that token is the skill this demo teaches.** Claude will
 propose an id-mapping (pull the token from the `/login` response, substitute it into later
 requests), show you the rule, and ask before applying it.
