@@ -47,7 +47,7 @@ TARGET=http://localhost:19870 ./traffic/generate.sh
 Stop the proxy (Ctrl-C). Your recording uploads automatically, and the sensor prints a line
 like `Recording ID: <uuid>` — note it down, you'll need it for the replay.
 
-## 2. Replay against v2
+## 2. Replay against v2 (the noisy "before")
 
 Substitute the `Recording ID` you noted above for `<RECORDING_ID>`:
 
@@ -55,23 +55,39 @@ Substitute the `Recording ID` you noted above for `<RECORDING_ID>`:
 regrade replay --rec-id <RECORDING_ID> --target http://localhost:8002
 ```
 
-## 3. Analyze it in Claude Code
+This first replay re-sends the token captured during recording — which v2 no longer
+recognizes — so it's deliberately full of `401` noise. That's what you'll clean up next.
+
+## 3. Map the token in Claude Code
 
 Open this repo in Claude Code and say:
 
 > Walk me through my latest ReGrade replay.
 
-Claude — guided by this repo's `CLAUDE.md` — will explain each step as it goes. You'll
-see a burst of `401`s first: the replay is reusing the token from the recording, but v2
-issued a brand-new one. **Mapping that token is the skill this demo teaches.** Claude will
-propose an id-mapping (pull the token from the `/login` response, substitute it into later
-requests), show you the rule, and ask before applying it.
+Claude — guided by this repo's `CLAUDE.md` — explains each step as it goes. You'll see a
+burst of `401`s: the replay is sending the recorded token, but v2 issued a brand-new one at
+login. **Mapping that token is the skill this demo teaches.** Claude will create a profile
+with an **id-mapping** (pull the fresh token from the `/login` response, substitute it into
+later requests), show you the rule, and ask before creating it.
 
-## 4. The payoff
+## 4. Re-replay with your new profile
 
-Once the token is mapped and the `401` noise clears, **one real delta remains** — and
-Claude will help you read it. That's ReGrade's whole value: *noise hides signal; a profile
-removes the noise; the signal appears.*
+An id-mapping only takes effect when the requests are *re-issued* through it, so run the
+replay again — this time with the profile. (`regrade replay` is a CLI command; applying a
+profile to the *existing* replay would only re-label it, not re-send the requests with the
+fresh token.)
+
+```bash
+regrade replay --rec-id <RECORDING_ID> --profile hello-regrade --target http://localhost:8002
+```
+
+Use the profile name Claude created — this walkthrough uses `hello-regrade`.
+
+## 5. The payoff
+
+Back in Claude Code, ask it to analyze the new replay. Now the token matches, the `401`
+noise is gone, and **one real delta remains** — Claude will help you read it. That's
+ReGrade's whole value: *noise hides signal; a profile removes the noise; the signal appears.*
 
 ## How the "versions" differ
 

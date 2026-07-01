@@ -41,8 +41,16 @@ time on it.
 3. Propose an **id-mapping**: extract the `token` field from the `/login` response and
    substitute it into the `Authorization` header of the later requests. Show the rule,
    reference `mapping-guide.md` for exact syntax, and **ask before creating it**.
-4. On confirmation: `create_id_mapping`, then `apply_profile_to_replay`.
-5. `summarize_deltas` again. The `401` noise is gone.
+4. On confirmation: `create_profile` (name it `hello-regrade`), then `create_id_mapping`.
+5. **Have the user re-replay against v2 with the profile.** The id-mapping substitutes the
+   fresh token at replay *execution* time, so the requests must be re-issued through it —
+   `apply_profile_to_replay` only re-labels an existing replay, it cannot re-run it. Ask the
+   user to run this in their terminal (`regrade replay` is CLI-only), using the recording ID
+   from README §1:
+   `regrade replay --rec-id <RECORDING_ID> --profile hello-regrade --target http://localhost:8002`
+   Then find the new replay with `list_replays`.
+6. `summarize_deltas` on the **new** replay. The `401` noise is gone, and one real delta
+   remains — investigate it with them (see below).
 
 ## Do NOT pre-empt the finding
 
