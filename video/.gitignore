@@ -4,6 +4,7 @@ capture/*.mp4
 capture/*.webm
 out/
 remotion/out/
+remotion/test/still.png
 __pycache__/
 *.pyc
 .DS_Store
