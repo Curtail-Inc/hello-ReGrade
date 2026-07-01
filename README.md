@@ -12,7 +12,7 @@ hiding underneath.
   `regrade` sensor from the downloads at https://app.regrade.curtail.com/downloads, and set
   `REGRADE_API_KEY` (or `~/.regrade/key`).
 - **Claude Code** with the ReGrade plugin:
-  `claude plugins marketplace add Curtail-Inc/Marketplace` then `claude plugin install regrade@regrade`.
+  `claude plugin marketplace add Curtail-Inc/Marketplace` then `claude plugin install regrade@regrade`.
 
 ## The demo service
 
