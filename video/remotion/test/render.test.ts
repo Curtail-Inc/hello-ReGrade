@@ -1,6 +1,7 @@
 import {expect, test} from 'vitest';
 import {bundle} from '@remotion/bundler';
 import {renderStill, selectComposition} from '@remotion/renderer';
+import {existsSync} from 'node:fs';
 import path from 'path';
 
 test('Video composition renders a still without throwing', async () => {
@@ -16,5 +17,5 @@ test('Video composition renders a still without throwing', async () => {
   const composition = await selectComposition({serveUrl, id: 'Video', inputProps: props});
   const out = path.join(__dirname, 'still.png');
   await renderStill({composition, serveUrl, output: out, inputProps: props, frame: 0});
-  expect(out).toBeTruthy();
+  expect(existsSync(out)).toBe(true);
 }, 120000);
