@@ -4,6 +4,8 @@ capture/*.mp4
 capture/*.webm
 capture/*.mp3
 capture/*.json
+capture/*.png
+capture/tapes/
 capture/vo_list.txt
 out/
 remotion/out/

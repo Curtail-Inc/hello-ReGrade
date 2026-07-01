@@ -21,7 +21,7 @@ export const Captions: React.FC<{captions: Cues}> = ({captions}) => {
           const speaking = spoken && frame < w.endFrame;
           return (
             <span key={i} style={{opacity: spoken ? 1 : 0.45,
-              display: 'inline-block', transform: speaking ? 'scale(1.08)' : 'none', margin: '0 6px'}}>
+              display: 'inline-block', transform: speaking ? 'scale(1.05)' : 'none', margin: '0 0.22em'}}>
               {w.word}
             </span>
           );
