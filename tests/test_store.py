@@ -75,8 +75,11 @@ def test_v2_total_drops_the_tax(monkeypatch):
 
 def test_v1_and_v2_differ_only_on_total(monkeypatch):
     c1 = _v(monkeypatch, 1)
-    b1 = c1.get("/orders/1001", headers={"Authorization": f"Bearer {_token(c1)}"}).get_json()
+    resp1 = c1.get("/orders/1001", headers={"Authorization": f"Bearer {_token(c1)}"})
     c2 = _v(monkeypatch, 2)
-    b2 = c2.get("/orders/1001", headers={"Authorization": f"Bearer {_token(c2)}"}).get_json()
+    resp2 = c2.get("/orders/1001", headers={"Authorization": f"Bearer {_token(c2)}"})
+    assert resp1.status_code == resp2.status_code == 200
+    b1 = resp1.get_json()
+    b2 = resp2.get_json()
     assert b1.pop("total") != b2.pop("total")
     assert b1 == b2  # every other field identical
