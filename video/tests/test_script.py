@@ -1,4 +1,5 @@
 import json
+import os
 import pytest
 from lib.script import load_script, Beat
 
@@ -26,3 +27,15 @@ def test_rejects_duplicate_id(tmp_path):
                                         {"id": "a", "clip": "b.mp4", "vo": "y"}]})
     with pytest.raises(ValueError):
         load_script(path)
+
+
+def test_rejects_empty_field(tmp_path):
+    path = _write(tmp_path, {"beats": [{"id": "a", "clip": "a.mp4", "vo": ""}]})
+    with pytest.raises(ValueError):
+        load_script(path)
+
+
+def test_real_script_has_nine_beats():
+    path = os.path.join(os.path.dirname(__file__), "..", "script.json")
+    beats = load_script(path)
+    assert [b.id for b in beats] == ["cold-open", "setup", "record", "replay", "noise", "map", "rereplay", "payoff", "outro"]

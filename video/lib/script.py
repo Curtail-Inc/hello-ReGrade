@@ -11,7 +11,8 @@ class Beat:
 
 
 def load_script(path: str) -> list[Beat]:
-    data = json.loads(open(path).read())
+    with open(path) as f:
+        data = json.load(f)
     beats, seen = [], set()
     for raw in data.get("beats", []):
         for field in ("id", "clip", "vo"):
