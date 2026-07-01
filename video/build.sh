@@ -4,7 +4,6 @@ set -euo pipefail
 cd "$(dirname "$0")"
 PY=.venv/bin/python
 unset -f node npm npx nvm 2>/dev/null || true
-export PATH="/Users/saley/.nvm/versions/node/v22.19.0/bin:$PATH"; hash -r 2>/dev/null || true
 
 echo "== 1. voiceover =="
 "$PY" tts.py script.json capture/voiceover.mp3 capture/timestamps.json
