@@ -1,0 +1,9 @@
+node_modules/
+.venv/
+capture/*.mp4
+capture/*.webm
+out/
+remotion/out/
+__pycache__/
+*.pyc
+.DS_Store
