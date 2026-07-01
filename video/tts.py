@@ -52,16 +52,30 @@ def _edge_beat(text, out_mp3):
     return []  # edge-tts gives no word alignment
 
 
+def _stub_beat(text, out_mp3):
+    """Offline stub: silent audio sized to the text, with evenly-spaced word timestamps.
+    Used for the credential- and network-free placeholder smoke render (TTS_STUB env)."""
+    words = text.split()
+    dur = max(1.5, len(words) * 0.35)
+    subprocess.run(["ffmpeg", "-y", "-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono",
+                    "-t", f"{dur}", "-q:a", "9", out_mp3], check=True, capture_output=True)
+    per = dur / max(1, len(words))
+    return [{"word": w, "start": round(i * per, 3), "end": round((i + 1) * per, 3)} for i, w in enumerate(words)]
+
+
 def synthesize(script_path, out_mp3, out_timestamps, work="capture"):
     beats = load_script(script_path)
     per_beat, mp3s = {}, []
     for i, b in enumerate(beats):
         mp3 = os.path.join(work, f"vo_{i:02d}_{b.id}.mp3")
-        try:
-            words = _elevenlabs_beat(b.vo, mp3)
-        except Exception as exc:               # noqa: BLE001 — fall back, but surface why
-            print(f"[tts] ElevenLabs failed for '{b.id}' ({exc}); falling back to edge-tts", file=sys.stderr)
-            words = _edge_beat(b.vo, mp3)
+        if os.environ.get("TTS_STUB"):
+            words = _stub_beat(b.vo, mp3)
+        else:
+            try:
+                words = _elevenlabs_beat(b.vo, mp3)
+            except Exception as exc:               # noqa: BLE001 — fall back, but surface why
+                print(f"[tts] ElevenLabs failed for '{b.id}' ({exc}); falling back to edge-tts", file=sys.stderr)
+                words = _edge_beat(b.vo, mp3)
         per_beat[b.id] = {"duration": _ffprobe_duration(mp3), "words": words}
         mp3s.append(mp3)
     # concat all beat mp3s into one voiceover.mp3 (ffmpeg concat demuxer)
