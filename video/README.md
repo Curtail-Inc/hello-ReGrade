@@ -34,13 +34,13 @@ For supplementary footage of the ReGrade web-UI delta view, use the Playwright h
 ```bash
 python capture/record_ui.py https://app.regrade.curtail.com/orgs/.../replays/... capture/web-ui.webm
 ```
-(Requires `playwright` installed; records 1920×1080 @24fps as a `.webm`.)
+(Requires `playwright` installed; records 1920×1080 as a `.webm`.)
 
 ### 2. Text-to-Speech (TTS)
 
 The pipeline uses **ElevenLabs** for the voiceover (voice ID `Gfpl8Yo74Is0W6cPUWWT`). Set the API key:
 ```bash
-export ELEVENLABS_API_KEY=sk_...
+export ELEVENLABS_API_KEY=<your-key>
 ```
 
 The TTS step is **keyed to the script** (`script.json`). Each beat's duration is derived from the voiceover duration (in `build_episode.py`).
@@ -52,7 +52,7 @@ For CI smoke tests or local validation without the API key, disable TTS generati
 TTS_STUB=1 ./build.sh
 ```
 
-This produces silent placeholder audio (no real voice, no captions) but validates the entire render pipeline.
+This produces silent placeholder audio; captions still render, but with evenly-spaced timing rather than voice-aligned. Validates the entire render pipeline.
 
 ### 3. Build
 
@@ -85,9 +85,9 @@ The final render requires **real screen footage** from a working, end-to-end ReG
 
 Once real footage is available:
 1. Record or copy clips into `capture/`.
-2. Run `make voiceover` or `./build.sh` with `ELEVENLABS_API_KEY` set.
-3. Commit voiceover artifacts.
-4. `./build.sh` renders the final captioned, voiced cut.
+2. Run `./build.sh` with `ELEVENLABS_API_KEY` set (generates voiceover via ElevenLabs + aligned captions).
+3. Commit voiceover artifacts: `git add -f capture/voiceover.mp3 capture/timestamps.json`.
+4. Subsequent re-renders use `./build.sh` (reuses committed voiceover without the API key).
 5. Publish `out/hello-regrade.mp4` to Curtail hosting.
 
 ## Development
