@@ -8,11 +8,11 @@ hiding underneath.
 ## What you'll need
 
 - **Docker** (for the demo service) and **Python 3** (for the traffic script).
-- A **ReGrade account + API key** — sign up at https://app.regrade.curtail.com and follow
-  the [getting-started guide](https://app.regrade.curtail.com) to install the `regrade`
-  sensor and set `REGRADE_API_KEY`.
+- A **ReGrade account + API key** — sign up at https://app.regrade.curtail.com, install the
+  `regrade` sensor from the downloads at https://app.regrade.curtail.com/downloads, and set
+  `REGRADE_API_KEY` (or `~/.regrade/key`).
 - **Claude Code** with the ReGrade plugin:
-  `claude plugins marketplace add Curtail-Inc/Marketplace` then install the `regrade` plugin.
+  `claude plugins marketplace add Curtail-Inc/Marketplace` then `claude plugin install regrade@regrade`.
 
 ## The demo service
 
@@ -44,12 +44,15 @@ In another, generate some traffic *through the proxy*:
 TARGET=http://localhost:19870 ./traffic/generate.sh
 ```
 
-Stop the proxy (Ctrl-C). Your recording uploads automatically.
+Stop the proxy (Ctrl-C). Your recording uploads automatically, and the sensor prints a line
+like `Recording ID: <uuid>` — note it down, you'll need it for the replay.
 
 ## 2. Replay against v2
 
+Substitute the `Recording ID` you noted above for `<RECORDING_ID>`:
+
 ```bash
-regrade replay --target http://localhost:8002
+regrade replay --rec-id <RECORDING_ID> --target http://localhost:8002
 ```
 
 ## 3. Analyze it in Claude Code
