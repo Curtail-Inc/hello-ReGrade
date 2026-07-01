@@ -5,8 +5,8 @@ import {existsSync} from 'node:fs';
 import path from 'path';
 
 test('Video composition renders a still without throwing', async () => {
-  // publicDir must be set at bundle time, not renderStill time (remotion 4.0.230
-  // renderStill() has no publicDir option); clips live in ../../capture at build time.
+  // publicDir must be set at bundle time, not renderStill time (renderStill() has no
+  // publicDir option); clips live in ../../capture at build time.
   const serveUrl = await bundle({
     entryPoint: path.join(__dirname, '../src/index.ts'),
     publicDir: path.join(__dirname, '../../capture'),
