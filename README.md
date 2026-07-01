@@ -69,9 +69,10 @@ burst of `401`s: the replay is sending the recorded token, but v2 issued a brand
 login. **Mapping that token is the skill this demo teaches.** Claude will create a profile
 with **two cooperating rules** — an **id-mapping** that pulls the fresh token from the
 `/login` response, and a **header transformation rule** that substitutes it into the
-`X-Auth-Token` header of the later requests — then show you the rules and ask before
-creating them. (An id-mapping only *learns* the token; the sensor auto-applies learned
-values to URLs and bodies, but a header needs the transformation rule to *apply* it.)
+`Authorization: Bearer <token>` header of the later requests — then show you the rules and
+ask before creating them. (An id-mapping only *learns* the token; the sensor auto-applies
+learned values to URLs and bodies, but a header needs the transformation rule to *apply*
+it.)
 
 ## 4. Re-replay with your new profile
 

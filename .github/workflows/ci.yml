@@ -31,8 +31,8 @@ jobs:
       - name: v1 total is correct, v2 total drops the tax
         run: |
           T1=$(curl -sf -X POST localhost:8001/login -H 'Content-Type: application/json' -d '{"username":"demo","password":"demo"}' | python3 -c 'import sys,json;print(json.load(sys.stdin)["token"])')
-          curl -sf localhost:8001/orders/1001 -H "X-Auth-Token: $T1" | grep -q '"total":46.2'
+          curl -sf localhost:8001/orders/1001 -H "Authorization: Bearer $T1" | grep -q '"total":46.2'
           T2=$(curl -sf -X POST localhost:8002/login -H 'Content-Type: application/json' -d '{"username":"demo","password":"demo"}' | python3 -c 'import sys,json;print(json.load(sys.stdin)["token"])')
-          curl -sf localhost:8002/orders/1001 -H "X-Auth-Token: $T2" | grep -q '"total":42.0'
+          curl -sf localhost:8002/orders/1001 -H "Authorization: Bearer $T2" | grep -q '"total":42.0'
       - if: always()
         run: docker compose down

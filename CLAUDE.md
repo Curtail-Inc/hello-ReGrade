@@ -43,8 +43,12 @@ time on it.
    - an **id-mapping** (`create_id_mapping`, `source=body`, `json_path=$.token`) that
      *learns* the fresh token from each `/login` response, and
    - a **header transformation rule** (`create_transformation_rule`, `target=header`,
-     `header_name=X-Auth-Token`) that *substitutes* the learned token into the
-     `X-Auth-Token` header of the later requests.
+     `header_name=Authorization`) that *substitutes* the learned token into the
+     `Authorization: Bearer <token>` header of the later requests. Because the token is
+     only part of the header value, this rule matches with a `pattern`
+     (`(?i)bearer\s+(.+)`), names the captured token via `captures` (`{"token": 1}`), and
+     rebuilds the header with a `transform` (`Bearer {mapped}`) where `mapped` comes from
+     the `auth_token` namespace.
 
    Explain the split: an id-mapping only *learns* the value; the sensor auto-applies
    learned values to request URLs and bodies, but a **header** needs the transformation
