@@ -4,10 +4,13 @@ Programmatic build (Remotion + ElevenLabs VO + ffmpeg) of the ~5-min demo walkth
 
 ## Prerequisites
 
-- **Python 3** with `pillow` and optional `playwright`:
+- **Node 22+** (the Remotion render requires it — matches the `engines` field in `remotion/package.json`).
+- **Python 3**, with the venv `build.sh` expects (it invokes `.venv/bin/python` directly, so this exact path is required, not just "some python on PATH"):
   ```bash
-  pip install pillow
-  pip install playwright && playwright install chromium  # optional, for web-UI recording
+  python3 -m venv .venv
+  .venv/bin/pip install -r requirements.txt   # elevenlabs + edge-tts
+  .venv/bin/pip install pillow                # placeholder-clip generator
+  .venv/bin/pip install playwright && .venv/bin/playwright install chromium  # optional, web-UI capture
   ```
 - Placeholder clips are auto-generated; real footage from a working end-to-end ReGrade demo is required for production.
 
