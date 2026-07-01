@@ -23,7 +23,7 @@ curl -sSf "${TARGET}/products" >/dev/null
 
 echo "→ GET /orders/1001 (authed) x3"
 for _ in 1 2 3; do
-  curl -sSf "${TARGET}/orders/1001" -H "Authorization: Bearer ${TOKEN}" >/dev/null
+  curl -sSf "${TARGET}/orders/1001" -H "X-Auth-Token: ${TOKEN}" >/dev/null
 done
 
 echo "✓ traffic complete"

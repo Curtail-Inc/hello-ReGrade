@@ -67,8 +67,11 @@ Open this repo in Claude Code and say:
 Claude — guided by this repo's `CLAUDE.md` — explains each step as it goes. You'll see a
 burst of `401`s: the replay is sending the recorded token, but v2 issued a brand-new one at
 login. **Mapping that token is the skill this demo teaches.** Claude will create a profile
-with an **id-mapping** (pull the fresh token from the `/login` response, substitute it into
-later requests), show you the rule, and ask before creating it.
+with **two cooperating rules** — an **id-mapping** that pulls the fresh token from the
+`/login` response, and a **header transformation rule** that substitutes it into the
+`X-Auth-Token` header of the later requests — then show you the rules and ask before
+creating them. (An id-mapping only *learns* the token; the sensor auto-applies learned
+values to URLs and bodies, but a header needs the transformation rule to *apply* it.)
 
 ## 4. Re-replay with your new profile
 

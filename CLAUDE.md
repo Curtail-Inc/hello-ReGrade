@@ -38,10 +38,20 @@ time on it.
 2. `summarize_deltas` — expect a burst of `401`s. Explain: the replay is reusing the old
    token; v2 doesn't recognize it. `/products` (public) should show **no** delta — point
    that out as the "nothing changed, nothing reported" control.
-3. Propose an **id-mapping**: extract the `token` field from the `/login` response and
-   substitute it into the `Authorization` header of the later requests. Show the rule,
-   reference `mapping-guide.md` for exact syntax, and **ask before creating it**.
-4. On confirmation: `create_profile` (name it `hello-regrade`), then `create_id_mapping`.
+3. Propose the mapping — it's **two rules that work together**, and explaining why is
+   the teaching moment:
+   - an **id-mapping** (`create_id_mapping`, `source=body`, `json_path=$.token`) that
+     *learns* the fresh token from each `/login` response, and
+   - a **header transformation rule** (`create_transformation_rule`, `target=header`,
+     `header_name=X-Auth-Token`) that *substitutes* the learned token into the
+     `X-Auth-Token` header of the later requests.
+
+   Explain the split: an id-mapping only *learns* the value; the sensor auto-applies
+   learned values to request URLs and bodies, but a **header** needs the transformation
+   rule to apply it. Show both rules, reference `mapping-guide.md` for syntax, and **ask
+   before creating them**.
+4. On confirmation: `create_profile` (name it `hello-regrade`), then `create_id_mapping`,
+   then `create_transformation_rule`.
 5. **Have the user re-replay against v2 with the profile.** The id-mapping substitutes the
    fresh token at replay *execution* time, so the requests must be re-issued through it —
    `apply_profile_to_replay` only re-labels an existing replay, it cannot re-run it. Ask the

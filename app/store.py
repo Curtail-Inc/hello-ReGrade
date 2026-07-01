@@ -24,10 +24,10 @@ def _issue_token() -> str:
 
 
 def _is_authed() -> bool:
-    header = request.headers.get("Authorization", "")
-    if not header.startswith("Bearer "):
-        return False
-    return header[len("Bearer "):] in _issued_tokens
+    # The whole X-Auth-Token value IS the token (no scheme prefix), so a ReGrade
+    # id-mapping can substitute it on replay with a single whole-value header rule.
+    token = request.headers.get("X-Auth-Token", "")
+    return token != "" and token in _issued_tokens
 
 
 @app.post("/login")

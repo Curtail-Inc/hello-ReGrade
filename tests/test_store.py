@@ -55,29 +55,29 @@ def test_orders_requires_auth(monkeypatch):
 def test_orders_with_token_succeeds(monkeypatch):
     client = _v(monkeypatch, 1)
     tok = _token(client)
-    resp = client.get("/orders/1001", headers={"Authorization": f"Bearer {tok}"})
+    resp = client.get("/orders/1001", headers={"X-Auth-Token": tok})
     assert resp.status_code == 200
 
 
 def test_v1_total_is_correct(monkeypatch):
     client = _v(monkeypatch, 1)
     tok = _token(client)
-    body = client.get("/orders/1001", headers={"Authorization": f"Bearer {tok}"}).get_json()
+    body = client.get("/orders/1001", headers={"X-Auth-Token": tok}).get_json()
     assert body["total"] == 46.20
 
 
 def test_v2_total_drops_the_tax(monkeypatch):
     client = _v(monkeypatch, 2)
     tok = _token(client)
-    body = client.get("/orders/1001", headers={"Authorization": f"Bearer {tok}"}).get_json()
+    body = client.get("/orders/1001", headers={"X-Auth-Token": tok}).get_json()
     assert body["total"] == 42.00
 
 
 def test_v1_and_v2_differ_only_on_total(monkeypatch):
     c1 = _v(monkeypatch, 1)
-    resp1 = c1.get("/orders/1001", headers={"Authorization": f"Bearer {_token(c1)}"})
+    resp1 = c1.get("/orders/1001", headers={"X-Auth-Token": _token(c1)})
     c2 = _v(monkeypatch, 2)
-    resp2 = c2.get("/orders/1001", headers={"Authorization": f"Bearer {_token(c2)}"})
+    resp2 = c2.get("/orders/1001", headers={"X-Auth-Token": _token(c2)})
     assert resp1.status_code == resp2.status_code == 200
     b1 = resp1.get_json()
     b2 = resp2.get_json()
