@@ -20,6 +20,26 @@ claude() { printf '%s %s\n' "${MAG}●${RST}" "$1"; sleep 0.7; }
 tool()   { printf '%s %s\n' "${GRN}⏺${RST}" "${DIM}${1}${RST}"; sleep 0.6; }
 hr()     { printf '%s\n' "${DIM}────────────────────────────────────────────────────${RST}"; }
 
+# ask(): the customer types a plain-English message into the Claude Code prompt box.
+# Renders a rounded input box and types the text char-by-char, keeping the right border aligned.
+ask() {
+  local text="$1" W=66 i shown pad
+  local CUR="${CYAN}▊${RST}"
+  printf '\e[?25l'   # hide the terminal cursor so only the styled ▊ caret shows while typing
+  printf '  %s╭%s╮%s\n' "$DIM" "$(printf '─%.0s' $(seq 1 $W))" "$RST"
+  for ((i=1; i<=${#text}; i++)); do
+    shown="${text:0:i}"
+    pad=$(( W - 4 - ${#shown} )); (( pad < 0 )) && pad=0
+    printf '\r  %s│%s %s❯%s %s%s%*s%s│%s' \
+      "$DIM" "$RST" "$CYAN" "$RST" "$shown" "$CUR" "$pad" "" "$DIM" "$RST"
+    sleep 0.034
+  done
+  printf '\n'
+  printf '  %s╰%s╯%s\n' "$DIM" "$(printf '─%.0s' $(seq 1 $W))" "$RST"
+  printf '\e[?25h'   # restore cursor
+  sleep 0.9
+}
+
 title() {
   echo; echo; echo
   out "   ${CYAN}${BOLD}hello-ReGrade${RST}" 0.7
@@ -58,9 +78,10 @@ beat04_replay() {
 }
 
 beat05_noise() {
-  user "Walk me through my latest ReGrade replay."
+  out "${DIM}# open the repo in Claude Code and just ask, in plain English${RST}" 0.7
+  ask "Walk me through my latest ReGrade replay."
   echo
-  claude "Pulling the delta summary for this replay."
+  claude "On it — pulling the delta summary. ${DIM}(ReGrade MCP tool)${RST}"
   tool "summarize_deltas(replay_id: 1f139972…)"
   echo
   out "  ${BOLD}22 differences${RST}   ·   /orders/1001: ${RED}21${RST}    /login: 1" 0.5
@@ -76,16 +97,16 @@ beat05_noise() {
 }
 
 beat06_map() {
-  user "Clear the token noise so we can see what actually changed."
+  ask "The replay is full of 401s — can you clear that token noise?"
   echo
   claude "Two cooperating rules. I'll show them before creating anything:"
   echo
   tool "create_id_mapping(source: body, json_path: \$.token, ns: auth_token)"
   out "     ${DIM}learns the fresh token from each /login response${RST}" 0.6
   tool "create_transformation_rule(target: header, X-Auth-Token, ns: auth_token)"
-  out "     ${DIM}substitutes that token into the requests on replay${RST}" 0.8
+  out "     ${DIM}substitutes that token into the requests on replay${RST}" 0.9
   echo
-  user "Looks right — create them."
+  ask "Looks right — create them."
   claude "${GRN}✓${RST} Profile ${BOLD}hello-regrade-demo${RST} updated. Re-run the replay"
   claude "  through it and the fresh token goes out in place of the stale one."
   sleep 1.6
@@ -100,9 +121,9 @@ beat07_rereplay() {
 }
 
 beat08_payoff() {
-  user "Analyze the new replay."
+  ask "Now analyze the new replay."
   echo
-  claude "Pulling the summary for the profiled replay."
+  claude "Pulling the summary for the profiled replay. ${DIM}(ReGrade MCP tool)${RST}"
   tool "summarize_deltas(replay_id: 4dd18d7f…)"
   echo
   out "  ${BOLD}3 differences${RST}   ·   /orders/1001   ·   ${DIM}401 noise: gone${RST}" 0.7

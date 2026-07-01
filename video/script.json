@@ -7,10 +7,10 @@
     {"id": "setup", "clip": "02-setup.mp4", "vo": "We start two versions of a tiny orders API. You'll record traffic against version one, and replay it against version two."},
     {"id": "record", "clip": "03-record.mp4", "vo": "The sensor proxies real traffic and captures it. When we stop, it prints a recording ID."},
     {"id": "replay", "clip": "04-replay.mp4", "vo": "Now we replay that recording against version two. Twenty-two differences — but most of it is noise."},
-    {"id": "noise", "clip": "05-noise.mp4", "vo": "In Claude Code, we ask it to walk us through the replay. We see a wall of 401s. The login token rotates every call, so version two rejects the old one, and those failures hide everything underneath."},
-    {"id": "map", "clip": "06-map.mp4", "vo": "So we teach ReGrade to handle the rotating token. Two small rules: one learns the fresh token from the login response, the other substitutes it into the requests. Claude writes them, and we confirm."},
+    {"id": "noise", "clip": "05-noise.mp4", "vo": "This all runs in Claude Code. You just type what you want, in plain English, and Claude calls the ReGrade tools for you. We ask it to walk us through the replay. We see a wall of 401s. The login token rotates every call, so version two rejects the old one, and those failures hide everything underneath."},
+    {"id": "map", "clip": "06-map.mp4", "vo": "So we tell Claude, again in plain English, to clear the token noise. It proposes two small rules: one learns the fresh token from the login response, the other substitutes it into the requests. We say the word, and it creates them."},
     {"id": "rereplay", "clip": "07-rereplay.mp4", "vo": "We replay once more, this time with the profile, so the fresh token is substituted as the requests go out."},
-    {"id": "payoff", "clip": "08-payoff.mp4", "vo": "The noise is gone, and one real difference remains: the order total dropped from forty-six twenty to forty-two. Version two silently stopped adding tax. ReGrade caught it from traffic alone."},
+    {"id": "payoff", "clip": "08-payoff.mp4", "vo": "We ask Claude to analyze the new replay. The noise is gone, and one real difference remains: the order total dropped from forty-six twenty to forty-two. Version two silently stopped adding tax. ReGrade caught it from traffic alone."},
     {"id": "outro", "clip": "09-outro.mp4", "vo": "Try it yourself at github dot com slash Curtail dash Inc slash hello dash ReGrade."}
   ]
 }
