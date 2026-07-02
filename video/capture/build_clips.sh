@@ -26,10 +26,10 @@ for b in "${BEATS[@]}"; do
   tape="capture/tapes/${name}.tape"
   cat > "$tape" <<TAPE
 Output capture/${name}.mp4
-Set Width 1920
-Set Height 1080
-Set FontSize 32
-Set Padding 70
+Set Width ${VW:-1920}
+Set Height ${VH:-1080}
+Set FontSize ${VF:-32}
+Set Padding ${VP:-70}
 Set Theme "Catppuccin Mocha"
 Set Framerate 24
 Hide

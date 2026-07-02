@@ -1,16 +1,51 @@
-import {AbsoluteFill, Series} from 'remotion';
+import {AbsoluteFill, Series, useCurrentFrame, interpolate} from 'remotion';
 import {Episode} from './schema';
 import {Beat} from './Beat';
+import {BrandCard} from './BrandCard';
+import {CycleLoop} from './CycleLoop';
+import {OutroCard} from './OutroCard';
+import {Highlights} from './Highlights';
+import {SectionTag} from './SectionTag';
 import {Captions} from './Captions';
+import {CANVAS} from './theme';
+
+const DIP = 6; // frames each beat fades up/down at its edges — a soft dip through the shared canvas
+
+const BeatFrame: React.FC<{dur: number; children: React.ReactNode}> = ({dur, children}) => {
+  const frame = useCurrentFrame();
+  const opacity = interpolate(frame, [0, DIP, dur - DIP, dur], [0, 1, 1, 0],
+    {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  return <AbsoluteFill style={{opacity}}>{children}</AbsoluteFill>;
+};
+
 export const Video: React.FC<Episode> = ({beats, captions}) => (
-  <AbsoluteFill>
+  <AbsoluteFill style={{backgroundColor: CANVAS}}>
     <Series>
-      {beats.map((b) => (
-        <Series.Sequence key={b.id} durationInFrames={Math.max(1, b.durationFrames)}>
-          <Beat clip={b.clip} />
-        </Series.Sequence>
-      ))}
+      {beats.map((b) => {
+        const dur = Math.max(1, b.durationFrames);
+        return (
+          <Series.Sequence key={b.id} durationInFrames={dur}>
+            <BeatFrame dur={dur}>
+              {b.id === 'cold-open' ? (
+                <BrandCard />
+              ) : b.id === 'loop' ? (
+                <CycleLoop durationInFrames={dur} />
+              ) : b.id === 'outro' ? (
+                <OutroCard />
+              ) : (
+                <>
+                  <Beat clip={b.clip} />
+                  <Highlights beatId={b.id} durationInFrames={dur} />
+                  <SectionTag beatId={b.id} />
+                </>
+              )}
+            </BeatFrame>
+          </Series.Sequence>
+        );
+      })}
     </Series>
+    <AbsoluteFill style={{pointerEvents: 'none',
+      background: 'radial-gradient(ellipse 78% 78% at 50% 50%, transparent 62%, rgba(0,0,0,0.32) 100%)'}} />
     <Captions captions={captions} />
   </AbsoluteFill>
 );
