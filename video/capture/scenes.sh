@@ -48,6 +48,20 @@ title() {
   out "   ${DIM}record  ${BLUE}→${DIM}  replay  ${BLUE}→${DIM}  map the token  ${BLUE}→${DIM}  the real bug appears${RST}" 2.4
 }
 
+prereqs() {
+  out "${DIM}# one-time setup — free, about two minutes${RST}" 1.2
+  echo
+  out " ${CYAN}①${RST} Create a free account + copy an API key   ${DIM}app.regrade.curtail.com${RST}" 2.6
+  out " ${CYAN}②${RST} Install the sensor   ${DIM}app.regrade.curtail.com/downloads${RST}" 1.8
+  cmd "export REGRADE_API_KEY=rg_live_…"
+  out " ${CYAN}③${RST} Add the ReGrade tools to Claude Code:" 1.0
+  cmd "claude plugin marketplace add https://app.regrade.curtail.com/downloads/latest/marketplace.json"
+  cmd "claude plugin install regrade@regrade --scope user"
+  out " ${CYAN}④${RST} Connect once:   ${BOLD}/mcp${RST}   ${DIM}→ log in with the same account as your key${RST}" 2.6
+  echo
+  out "   ${GRN}${BOLD}✓ all set — now the fun part${RST}" 4.0
+}
+
 beat02_setup() {
   out "${DIM}# two versions of a tiny orders API — record against v1, replay against v2${RST}" 0.8
   cmd "git clone https://github.com/Curtail-Inc/hello-ReGrade && cd hello-ReGrade"
@@ -57,15 +71,19 @@ beat02_setup() {
 }
 
 beat03_record() {
-  out "${DIM}# start the sensor in front of v1, then send some traffic through it${RST}" 0.8
+  out "${DIM}# terminal 1: start the sensor proxy in front of v1${RST}" 0.8
   cmd "regrade proxy --target http://localhost:8001 --port 19870"
-  out "${DIM}  proxying :19870 → :8001 … recording${RST}" 0.7
+  out "${DIM}  proxying :19870 → :8001 … recording${RST}" 1.2
+  echo
+  out "${DIM}# terminal 2: drive traffic through the proxy with the demo's script${RST}" 0.9
+  cmd "TARGET=http://localhost:19870 ./traffic/generate.sh"
   out "${BLUE} →${RST} POST /login   ${DIM}(fresh token)${RST}" 0.35
   out "${BLUE} →${RST} GET  /products   ${DIM}(public)${RST}" 0.35
   out "${BLUE} →${RST} GET  /orders/1001   ×3   ${DIM}(Authorization: Bearer)${RST}" 0.6
-  out "${DIM}  ^C  finalizing…${RST}" 0.6
-  out "${GRN} ✓${RST} Recording ID: ${BOLD}94790bad-a6bb-46f0-91da-a002c0ff3c4f${RST}" 0.4
-  out "${GRN} ✓${RST} 7 entries, 1 chunk" 1.6
+  out "${GRN} ✓${RST} traffic complete" 1.4
+  out "${DIM}  ^C the proxy  ·  finalizing…${RST}" 1.0
+  out "${GRN} ✓${RST} Recording ID: ${BOLD}94790bad-a6bb-46f0-91da-a002c0ff3c4f${RST}" 1.2
+  out "${GRN} ✓${RST} 7 entries, 1 chunk  ·  uploaded" 4.0
 }
 
 beat04_replay() {
@@ -78,7 +96,7 @@ beat04_replay() {
 }
 
 beat05_noise() {
-  out "${DIM}# in Claude Code — or any MCP client — just ask, in plain English${RST}" 0.7
+  out "${DIM}# open the hello-ReGrade repo in Claude Code — or any MCP client — then just ask${RST}" 0.7
   ask "Walk me through my latest ReGrade replay."
   echo
   claude "On it — pulling the delta summary. ${DIM}(ReGrade MCP tool)${RST}"
@@ -109,19 +127,19 @@ beat06_map() {
   out "     ${DIM}substitutes the token into the Authorization header on replay${RST}" 0.9
   echo
   ask "Looks right — create them."
-  claude "${GRN}✓${RST} Profile ${BOLD}hello-regrade-demo${RST} updated. Re-run the replay"
+  claude "${GRN}✓${RST} Profile ${BOLD}hello-regrade${RST} updated. Re-run the replay"
   claude "  through it and the fresh token goes out in place of the stale one."
   sleep 1.6
 }
 
 beat07_rereplay() {
   out "${DIM}# replay again — this time through the profile${RST}" 0.8
-  cmd "regrade replay --rec-id 94790bad --profile hello-regrade-demo --target :8002"
+  cmd "regrade replay --rec-id 94790bad --profile hello-regrade --target :8002"
   out "${DIM}  substituting the fresh token as requests go out…${RST}" 1.0
   out "  Total deltas:  ${BOLD}${GRN}3${RST}   ${DIM}(was 22)${RST}" 1.2
   out "${DIM}  the 401s are gone — replay adapted.${RST}" 1.8
   echo
-  out "${GRN} ✓${RST} Profile ${BOLD}hello-regrade-demo${RST} saved with your app" 1.6
+  out "${GRN} ✓${RST} Profile ${BOLD}hello-regrade${RST} saved with your app" 1.6
   out "     ${DIM}the mapping rules persist — you don't rebuild them${RST}" 1.8
   out "${GRN} ✓${RST} Reused automatically on every future replay" 1.8
   out "     ${DIM}map a dynamic field once, and it's handled from here on${RST}" 2.2

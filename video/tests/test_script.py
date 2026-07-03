@@ -35,7 +35,7 @@ def test_rejects_empty_field(tmp_path):
         load_script(path)
 
 
-def test_real_script_has_ten_beats():
+def test_real_script_has_eleven_beats():
     path = os.path.join(os.path.dirname(__file__), "..", "script.json")
     beats = load_script(path)
-    assert [b.id for b in beats] == ["cold-open", "loop", "setup", "record", "replay", "noise", "map", "rereplay", "payoff", "outro"]
+    assert [b.id for b in beats] == ["cold-open", "loop", "prereqs", "setup", "record", "replay", "noise", "map", "rereplay", "payoff", "outro"]

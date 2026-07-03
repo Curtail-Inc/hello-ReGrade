@@ -8,6 +8,7 @@ mkdir -p capture/tapes
 
 BEATS=(
   "01-cold-open:title"
+  "10-prereqs:prereqs"
   "02-setup:beat02_setup"
   "03-record:beat03_record"
   "04-replay:beat04_replay"

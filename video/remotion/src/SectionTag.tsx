@@ -5,6 +5,7 @@ const RED = '#E0001F';
 // Ties each terminal beat back to a step of the Agentic Coding Loop shown in the intro.
 type Section = {step?: number; title: string};
 const SECTIONS: Record<string, Section> = {
+  prereqs: {title: 'One-time setup'},
   setup: {title: 'Two versions to compare'},
   record: {title: 'Capture the baseline traffic'},
   replay: {step: 2, title: 'Replay old traffic against the new build'},
