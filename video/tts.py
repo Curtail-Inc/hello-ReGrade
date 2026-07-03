@@ -73,8 +73,10 @@ def synthesize(script_path, out_mp3, out_timestamps, work="capture"):
     _warn_if_stub()
     beats = load_script(script_path)
     per_beat, mp3s = {}, []
-    for i, b in enumerate(beats):
-        mp3 = os.path.join(work, f"vo_{i:02d}_{b.id}.mp3")
+    for b in beats:
+        # id-only filename: beat order comes from script.json, so no index prefix —
+        # inserting a beat never shifts another beat's cached take.
+        mp3 = os.path.join(work, f"vo_{b.id}.mp3")
         if os.environ.get("TTS_STUB"):
             words = _stub_beat(b.vo, mp3)
         else:
