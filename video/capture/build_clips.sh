@@ -20,6 +20,8 @@ BEATS=(
 
 for b in "${BEATS[@]}"; do
   name="${b%%:*}"; fn="${b##*:}"
+  # Optional args restrict the rebuild to named clips (e.g. `build_clips.sh 07-rereplay`).
+  if [ $# -gt 0 ] && [[ " $* " != *" $name "* ]]; then continue; fi
   TIMEFORMAT='%R'
   dur=$( { time bash capture/scenes.sh "$fn" >/dev/null 2>&1; } 2>&1 )
   sleepms=$(awk -v d="$dur" 'BEGIN{printf "%d", (d+1.3)*1000}')

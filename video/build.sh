@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build the demo video: TTS -> episode.json -> Remotion silent render -> ffmpeg mux VO.
+# Build the demo video: TTS -> episode.json -> Remotion silent render -> normalize VO -> ffmpeg mux VO.
 set -euo pipefail
 cd "$(dirname "$0")"
 PY=.venv/bin/python
@@ -13,11 +13,14 @@ echo "== 2. episode.json =="
 
 echo "== 3. remotion silent render =="
 ( cd remotion && npx remotion render Video ../out/silent.mp4 \
-    --props=../out/episode.json --public-dir=../capture --codec=h264 )
+    --props=../out/episode.json --public-dir=../capture --codec=h264 --crf=16 )
 
-echo "== 4. mux voiceover =="
-ffmpeg -y -i out/silent.mp4 -i capture/voiceover.mp3 \
-  -map 0:v -map 1:a -vf "fps=24,format=yuv420p" \
-  -c:v libx264 -preset medium -crf 20 -c:a aac -ac 2 -shortest \
+echo "== 4. normalize voiceover loudness (streaming target ~-16 LUFS) =="
+ffmpeg -y -i capture/voiceover.mp3 -af loudnorm=I=-16:TP=-1.5:LRA=11 \
+  -ar 44100 -c:a libmp3lame -q:a 2 capture/voiceover_norm.mp3
+
+echo "== 5. mux voiceover (stream-copy video — no re-encode) =="
+ffmpeg -y -i out/silent.mp4 -i capture/voiceover_norm.mp3 \
+  -map 0:v -map 1:a -c:v copy -c:a aac -ac 2 -b:a 192k -shortest \
   out/hello-regrade.mp4
 echo "✓ out/hello-regrade.mp4"

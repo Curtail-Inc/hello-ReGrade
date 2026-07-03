@@ -117,9 +117,15 @@ beat06_map() {
 beat07_rereplay() {
   out "${DIM}# replay again — this time through the profile${RST}" 0.8
   cmd "regrade replay --rec-id 94790bad --profile hello-regrade-demo --target :8002"
-  out "${DIM}  substituting the fresh token as requests go out…${RST}" 0.8
-  out "  Total deltas:  ${BOLD}${GRN}3${RST}   ${DIM}(was 22)${RST}" 0.6
-  out "${DIM}  the 401s are gone — replay adapted. Back to Claude.${RST}" 1.4
+  out "${DIM}  substituting the fresh token as requests go out…${RST}" 1.0
+  out "  Total deltas:  ${BOLD}${GRN}3${RST}   ${DIM}(was 22)${RST}" 1.2
+  out "${DIM}  the 401s are gone — replay adapted.${RST}" 1.8
+  echo
+  out "${GRN} ✓${RST} Profile ${BOLD}hello-regrade-demo${RST} saved with your app" 1.6
+  out "     ${DIM}the mapping rules persist — you don't rebuild them${RST}" 1.8
+  out "${GRN} ✓${RST} Reused automatically on every future replay" 1.8
+  out "     ${DIM}map a dynamic field once, and it's handled from here on${RST}" 2.2
+  out "${DIM}  Back to Claude.${RST}" 1.4
 }
 
 beat08_payoff() {
